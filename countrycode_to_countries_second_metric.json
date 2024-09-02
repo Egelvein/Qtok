@@ -1,0 +1,346 @@
+{
+    "af": [
+        "South Africa",
+        "Namibia"
+    ],
+    "ang": [
+        "India"
+    ],
+    "am": [
+        "Ethiopia"
+    ],
+    "amh": [
+        "Ethiopia"
+    ],
+    "ar": [
+        "Algeria",
+        "Bahrain",
+        "Chad",
+        "Egypt",
+        "Eritrea",
+        "Iraq",
+        "Jordan",
+        "Kuwait",
+        "Lebanon",
+        "Libya",
+        "Morocco",
+        "Oman",
+        "Qatar",
+        "Saudi Arabia",
+        "Sudan",
+        "Syria",
+        "United Arab Emirates"
+    ],
+    "as": [
+        "India"
+    ],
+    "az": [
+        "Azerbaijan"
+    ],
+    "be": [
+        "Belarus"
+    ],
+    "bg": [
+        "Bulgaria"
+    ],
+    "bh": [
+        "India"
+    ],
+    "bho": [
+        "India"
+    ],
+    "bn": [
+        "Bangladesh",
+        "India"
+    ],
+    "bs": [
+        "Bosnia and Herzegovina"
+    ],
+    "ch": [
+        "China",
+        "Taiwan",
+        "Hong Kong",
+        "Macau"
+    ],
+    "cs": [
+        "Czech Republic"
+    ],
+    "cy": [
+        "Wales"
+    ],
+    "da": [
+        "Denmark"
+    ],
+    "de": [
+        "Germany",
+        "Austria",
+        "Switzerland"
+    ],
+    "en": [
+        "United States",
+        "United Kingdom",
+        "Canada",
+        "Australia",
+        "New Zealand",
+        "Ireland",
+        "South Africa",
+        "India",
+        "Nigeria",
+        "Philippines",
+        "Pakistan",
+        "Singapore",
+        "Jamaica",
+        "Trinidad and Tobago",
+        "Barbados",
+        "Bahamas",
+        "Guyana",
+        "Fiji",
+        "Malta",
+        "Zimbabwe",
+        "Namibia",
+        "Botswana",
+        "Kenya",
+        "Uganda"
+    ],
+    "es": [
+        "Spain",
+        "Mexico",
+        "Colombia",
+        "Argentina",
+        "Peru",
+        "Venezuela",
+        "Chile",
+        "Ecuador",
+        "Guatemala",
+        "Cuba",
+        "Bolivia",
+        "Dominican Republic",
+        "Honduras",
+        "Paraguay",
+        "El Salvador",
+        "Nicaragua",
+        "Costa Rica",
+        "Puerto Rico",
+        "Panama",
+        "Uruguay",
+        "Equatorial Guinea"
+    ],
+    "et": [
+        "Estonia"
+    ],
+    "fa": [
+        "Afghanistan"
+    ],
+    "fr": [
+        "France",
+        "Canada",
+        "Belgium",
+        "Switzerland",
+        "Luxembourg",
+        "Monaco",
+        "Haiti",
+        "Benin",
+        "Burkina Faso",
+        "Burundi",
+        "Cameroon",
+        "Central African Republic",
+        "Chad",
+        "Comoros",
+        "Congo-Brazzaville",
+        "Congo-Kinshasa",
+        "Ivory Coast",
+        "Djibouti",
+        "Equatorial Guinea",
+        "Gabon",
+        "Guinea",
+        "Luxembourg",
+        "Madagascar",
+        "Mali",
+        "Niger",
+        "Rwanda",
+        "Senegal",
+        "Seychelles",
+        "Togo",
+        "Vanuatu"
+    ],
+    "ga": [
+        "Ireland"
+    ],
+    "ge": [
+        "Georgia"
+    ],
+    "gom": [
+        "India"
+    ],
+    "gre": [
+        "Greece",
+        "Cyprus"
+    ],
+    "he": [
+        "Israel"
+    ],
+    "hi": [
+        "India"
+    ],
+    "hr": [
+        "Croatia"
+    ],
+    "hu": [
+        "Hungary"
+    ],
+    "id": [
+        "Indonesia"
+    ],
+    "is": [
+        "Iceland"
+    ],
+    "it": [
+        "Italy",
+        "Switzerland"
+    ],
+    "ja": [
+        "Japan"
+    ],
+    "kn": [
+        "India"
+    ],
+    "ko": [
+        "South Korea"
+    ],
+    "ku": [
+        "Iraq",
+        "Turkey",
+        "Syria"
+    ],
+    "la": [
+        "Vatican City"
+    ],
+    "lt": [
+        "Lithuania"
+    ],
+    "lv": [
+        "Latvia"
+    ],
+    "mah": [
+        "India"
+    ],
+    "mai": [
+        "India"
+    ],
+    "mi": [
+        "New Zealand"
+    ],
+    "mn": [
+        "Mongolia"
+    ],
+    "mr": [
+        "India"
+    ],
+    "ms": [
+        "Malaysia",
+        "Brunei"
+    ],
+    "mt": [
+        "Malta"
+    ],
+    "my": [
+        "Myanmar"
+    ],
+    "ne": [
+        "Nepal"
+    ],
+    "new": [
+        "Nepal"
+    ],
+    "nl": [
+        "Netherlands",
+        "Belgium"
+    ],
+    "no": [
+        "Norway"
+    ],
+    "oc": [
+        "France"
+    ],
+    "pi": [
+        "India"
+    ],
+    "pl": [
+        "Poland"
+    ],
+    "ps": [
+        "Afganistan"
+    ],
+    "pt": [
+        "Portugal",
+        "Brazil"
+    ],
+    "ro": [
+        "Romania",
+        "Moldova"
+    ],
+    "rs": [
+        "Serbia"
+    ],
+    "sck": [
+        "India"
+    ],
+    "sk": [
+        "Slovakia"
+    ],
+    "sl": [
+        "Slovenia"
+    ],
+    "sq": [
+        "Albania",
+        "Kosovo"
+    ],
+    "sv": [
+        "Sweden"
+    ],
+    "sw": [
+        "Kenya",
+        "Tanzania",
+        "Uganda"
+    ],
+    "ta": [
+        "India",
+        "Sri Lanka",
+        "Singapore"
+    ],
+    "te": [
+        "India"
+    ],
+    "th": [
+        "Thailand"
+    ],
+    "ti": [
+        "Eritrea",
+        "Ethiopia"
+    ],
+    "tjk": [
+        "Tajikistan"
+    ],
+    "tl": [
+        "Philippines"
+    ],
+    "tr": [
+        "Turkey"
+    ],
+    "ug": [
+        "China"
+    ],
+    "uk": [
+        "Ukraine"
+    ],
+    "ur": [
+        "Pakistan",
+        "India"
+    ],
+    "uz": [
+        "Uzbekistan"
+    ],
+    "vi": [
+        "Vietnam"
+    ]
+}
