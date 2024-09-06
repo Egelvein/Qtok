@@ -1,0 +1,11 @@
+{
+  "padding_side": "right",
+  "add_prefix_space": false,
+  "bos_token": "<|endoftext|>",
+  "clean_up_tokenization_spaces": true,
+  "eos_token": "<|endoftext|>",
+  "model_max_length": 8192,
+  "tokenizer_class": "GPTNeoXTokenizer",
+  "unk_token": "<|endoftext|>",
+  "chat_template": "{% if messages[0]['role'] == 'system' %}{% set loop_messages = messages[1:] %}{% set system_message = messages[0]['content'] %}{% elif not 'system' in messages[0]['role'] %}{% set loop_messages = messages %}{% set system_message = 'A conversation between a user and an LLM-based AI assistant. The assistant gives helpful and honest answers.' %}{% else %}{% set loop_messages = messages %}{% set system_message = false %}{% endif %}{% for message in loop_messages %}{% if loop.index0 == 0 %}{% if system_message != false %}{{ '<|im_start|>system\n' + system_message.strip() + '\n'}}{% endif %}{{ '<|im_start|>' + message['role'] + '\n' + message['content'] + '<|im_end|>' }}{% else %}{{ '\n' + '<|im_start|>' + message['role'] + '\n' + message['content'] + '<|im_end|>' }}{% endif %}{% if (add_generation_prompt == true and loop.last) %}{{ '\n' + '<|im_start|>' + 'assistant' + '\n' }}{% elif (message['role'] == 'assistant') %}{% endif %}{% endfor %}"
+}
