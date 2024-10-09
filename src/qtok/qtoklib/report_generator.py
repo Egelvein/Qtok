@@ -19,122 +19,132 @@ def generate_html_report(output_folder, label, stats_table, stats_table_p, unico
 
     template = """
     <!DOCTYPE html>
-    <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Qtok Analysis Report for {{ label }}</title>
-        <style>
-            :root {
-                --primary-color: #3498db;
-                --secondary-color: #2c3e50;
-                --bg-color: #ecf0f1;
-                --text-color: #333;
-                --border-color: #bdc3c7;
-            }
-            body {
-                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-                line-height: 1.6;
-                color: var(--text-color);
-                background-color: var(--bg-color);
-                margin: 0;
-                padding: 0;
-            }
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Qtok Analysis Report for {{ label }}</title>
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2c3e50;
+            --bg-color: #ecf0f1;
+            --text-color: #333;
+            --border-color: #bdc3c7;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--bg-color);
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        header {
+            background-color: var(--primary-color);
+            color: white;
+            text-align: center;
+            padding: 1em 0;
+            margin-bottom: 2em;
+        }
+        h1 {
+            margin: 0;
+            font-size: 2.5em;
+        }
+        h2 {
+            color: var(--secondary-color);
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 0.5em;
+            margin-top: 1.5em;
+        }
+        .card {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2em;
+            overflow: hidden;
+        }
+        .card-header {
+            background-color: var(--secondary-color);
+            color: white;
+            padding: 1em;
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+        .card-body {
+            padding: 1em;
+            overflow-x: auto;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1em;
+        }
+        th, td {
+            border: 1px solid var(--border-color);
+            padding: 12px;
+            text-align: left;
+        }
+        th {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+        img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin: 1em auto;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .small-font-table {
+            font-size: 0.85em;
+        }
+        .small-font-table th,
+        .small-font-table td {
+            padding: 8px;
+        }
+        @media (max-width: 768px) {
             .container {
-                max-width: 1200px;
-                margin: 0 auto;
-                padding: 20px;
-            }
-            header {
-                background-color: var(--primary-color);
-                color: white;
-                text-align: center;
-                padding: 1em 0;
-                margin-bottom: 2em;
+                padding: 10px;
             }
             h1 {
-                margin: 0;
-                font-size: 2.5em;
-            }
-            h2 {
-                color: var(--secondary-color);
-                border-bottom: 2px solid var(--primary-color);
-                padding-bottom: 0.5em;
-                margin-top: 1.5em;
-            }
-            .card {
-                background-color: white;
-                border-radius: 8px;
-                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-                margin-bottom: 2em;
-                overflow: hidden;
-            }
-            .card-header {
-                background-color: var(--secondary-color);
-                color: white;
-                padding: 1em;
-                font-size: 1.2em;
-                font-weight: bold;
-            }
-            .card-body {
-                padding: 1em;
+                font-size: 2em;
             }
             table {
-                width: 100%;
-                border-collapse: collapse;
-                margin-top: 1em;
+                font-size: 0.9em;
+            }
+            .small-font-table {
+                font-size: 0.75em;
+            }
+            .card-body {
+                padding: 0.5em;
             }
             th, td {
-                border: 1px solid var(--border-color);
-                padding: 12px;
-                text-align: left;
-            }
-            th {
-                background-color: var(--primary-color);
-                color: white;
-            }
-            tr:nth-child(even) {
-                background-color: #f8f9fa;
-            }
-            img {
-                max-width: 100%;
-                height: auto;
-                display: block;
-                margin: 1em auto;
-                border-radius: 8px;
-                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            }
-            /* Новые стили для уменьшения размера шрифта в первых трех таблицах */
-            .small-font-table {
-                font-size: 0.85em;
-            }
-            .small-font-table th,
-            .small-font-table td {
                 padding: 8px;
             }
-            @media (max-width: 768px) {
-                .container {
-                    padding: 10px;
-                }
-                table {
-                    font-size: 0.9em;
-                }
-                .small-font-table {
-                    font-size: 0.75em;
-                }
-            }
-        </style>
-    </head>
-    <body>
-        <header>
-            <h1>Qtok Analysis Report</h1>
-            <p>Data analysis for {{ label }}</p>
-        </header>
-        <div class="container">
-            <div class="card">
-                <div class="card-header">Basic Statistics</div>
-                <div class="card-body">
-                    <img src="data:image/png;base64,{{ basic_stats_img }}" alt="Basic Statistics Chart">
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Qtok Analysis Report</h1>
+        <p>Data analysis for {{ label }}</p>
+    </header>
+    <div class="container">
+        <div class="card">
+            <div class="card-header">Basic Statistics</div>
+            <div class="card-body">
+                <img src="data:image/png;base64,{{ basic_stats_img }}" alt="Basic Statistics Chart">
+                <div class="table-wrapper">
                     <table class="small-font-table">
                         <tr>
                             {% for header in stats_table_p[0] %}
@@ -149,6 +159,8 @@ def generate_html_report(output_folder, label, stats_table, stats_table_p, unico
                         </tr>
                         {% endfor %}
                     </table>
+                </div>
+                <div class="table-wrapper">
                     <table class="small-font-table">
                         <tr>
                             {% for header in stats_table[0] %}
@@ -165,11 +177,13 @@ def generate_html_report(output_folder, label, stats_table, stats_table_p, unico
                     </table>
                 </div>
             </div>
+        </div>
 
-            <div class="card">
-                <div class="card-header">Unicode Statistics</div>
-                <div class="card-body">
-                    <img src="data:image/png;base64,{{ unicode_stats_img }}" alt="Unicode Statistics Chart">
+        <div class="card">
+            <div class="card-header">Unicode Statistics</div>
+            <div class="card-body">
+                <img src="data:image/png;base64,{{ unicode_stats_img }}" alt="Unicode Statistics Chart">
+                <div class="table-wrapper">
                     <table class="small-font-table">
                         <tr>
                             {% for header in unicode_table_p[0] %}
@@ -186,11 +200,13 @@ def generate_html_report(output_folder, label, stats_table, stats_table_p, unico
                     </table>
                 </div>
             </div>
+        </div>
 
-            <div class="card">
-                <div class="card-header">Latin Language Statistics</div>
-                <div class="card-body">
-                    <img src="data:image/png;base64,{{ latin_stats_img }}" alt="Latin Language Statistics Chart">
+        <div class="card">
+            <div class="card-header">Latin Language Statistics</div>
+            <div class="card-body">
+                <img src="data:image/png;base64,{{ latin_stats_img }}" alt="Latin Language Statistics Chart">
+                <div class="table-wrapper">
                     <table>
                         <tr>
                             {% for header in final_table_lat[0] %}
@@ -207,11 +223,13 @@ def generate_html_report(output_folder, label, stats_table, stats_table_p, unico
                     </table>
                 </div>
             </div>
+        </div>
 
-            <div class="card">
-                <div class="card-header">Cyrillic Language Statistics</div>
-                <div class="card-body">
-                    <img src="data:image/png;base64,{{ cyrillic_stats_img }}" alt="Cyrillic Language Statistics Chart">
+        <div class="card">
+            <div class="card-header">Cyrillic Language Statistics</div>
+            <div class="card-body">
+                <img src="data:image/png;base64,{{ cyrillic_stats_img }}" alt="Cyrillic Language Statistics Chart">
+                <div class="table-wrapper">
                     <table>
                         <tr>
                             {% for header in final_table_cyr[0] %}
@@ -229,8 +247,9 @@ def generate_html_report(output_folder, label, stats_table, stats_table_p, unico
                 </div>
             </div>
         </div>
-    </body>
-    </html>
+    </div>
+</body>
+</html>
     """
 
     rendered_html = Template(template).render(
