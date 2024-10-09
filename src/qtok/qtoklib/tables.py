@@ -19,8 +19,6 @@ def get_stats_table(model2vocab_tok, token2hits_tok, token2meta):
         "char_errors",
         "spaced_errors",
 
-
-
         "inner_errors",
     ]
     tokenizers_to_meta = {}
@@ -37,6 +35,8 @@ def get_stats_table(model2vocab_tok, token2hits_tok, token2meta):
             break
 
     for model, tokens in model2vocab_tok.items():
+
+        # assert len(tokens) == len(set(tokens))
 
         tokenizers_to_meta[model] = defaultdict(int)
         for token in tokens:
@@ -72,7 +72,6 @@ def get_stats_table(model2vocab_tok, token2hits_tok, token2meta):
         table_p.append([model] + [0] * len(headers))
         for i, header in enumerate(headers, start=1):
             table_p[-1][i] = round(100.*tokenizers_to_meta[model][header]/len(model2vocab_tok[model]), 2)
-
 
 
     return table, table_p

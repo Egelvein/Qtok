@@ -12,11 +12,9 @@ if os.path.exists('requirements.txt'):
 else:
     requirements = [
         "matplotlib",
-        "numpy",
-        "pandas",
     ]
 
-version = "0.9.0"
+version = "0.9.2"
 
 setup(
     name="Qtok",

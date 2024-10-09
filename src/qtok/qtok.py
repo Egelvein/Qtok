@@ -15,6 +15,8 @@ from .qtoklib.tables import get_unicode_tables
 from .qtoklib.figures import plot_with_distinct_markers_and_colors
 from collections import defaultdict
 from .qtoklib.tables import get_language_table
+from .qtoklib.report_generator import generate_html_report, generate_latex_report
+
 
 def save_tsv_file(file_path, data):
     with open(file_path, "w", encoding="utf-8") as fw:
@@ -42,7 +44,7 @@ def run_it():
     if not os.path.exists(tokenizer_file):
         print(f"Tokenizer file {tokenizer_file} not found")
         return
-    
+
     model2vocab_json_file = os.path.join(os.path.dirname(__file__), "data/model2vocab_tok.json")
     token2his_json_file = os.path.join(os.path.dirname(__file__), "data/token2hits_tok.json")
 
@@ -63,10 +65,10 @@ def run_it():
     for token in token2hits:
         if token not in model2vocab[label]:
             token2hits[token].append(0)
-    
+
     token2meta, category2tokens = get_classification(token2hits)
 
-    stats_table, stats_table_p = get_stats_table(model2vocab, token2hits, token2meta)    
+    stats_table, stats_table_p = get_stats_table(model2vocab, token2hits, token2meta)
 
     unicode_table_p = get_unicode_tables(model2vocab, token2hits, token2meta)
 
@@ -79,6 +81,7 @@ def run_it():
     for line in unicode_table_p:
         print("\t".join(map(str, line)))
 
+    file_path0 = os.path.join(output_folder, "basic_stats_abs.tsv")
     file_path1 = os.path.join(output_folder, "basic_stats.tsv")
     output_image_file1 = os.path.join(output_folder, "basic_stats.png")
 
@@ -90,6 +93,7 @@ def run_it():
     file_path_lang_cyr = os.path.join(output_folder, "cyrillic_stats.tsv")
     output_image_file_cyr = os.path.join(output_folder, "cyrillic_stats.png")
 
+    save_tsv_file(file_path0, stats_table)
     save_tsv_file(file_path1, stats_table_p)
     save_tsv_file(file_path2, unicode_table_p)
 
@@ -106,12 +110,47 @@ def run_it():
 
     final_table_lat, unseen_tokens_lat = get_language_table(model2vocab, token2hits, token2meta, lat_data)
     final_table_cyr, unseen_tokens_cyr = get_language_table(model2vocab, token2hits, token2meta, cyr_data)
-    
+
     save_tsv_file(file_path_lang_lat, final_table_lat)
     save_tsv_file(file_path_lang_cyr, final_table_cyr)
 
     plot_with_distinct_markers_and_colors(label, file_path_lang_lat, output_image_file_lat)
     plot_with_distinct_markers_and_colors(label, file_path_lang_cyr, output_image_file_cyr)
+
+    # print(category2tokens["pure_unicode"]["pure_unicode"])
+
+    # from .qtoklib.tokenizer import char_to_byte
+    # print(char_to_byte)
+    # print(len(char_to_byte))
+
+    generate_html_report(
+            output_folder,
+            label,
+            stats_table,
+            stats_table_p,
+            unicode_table_p,
+            final_table_lat,
+            final_table_cyr,
+            unseen_tokens_lat,
+            unseen_tokens_cyr
+        )
+
+    generate_latex_report(
+            output_folder,
+            label,
+            stats_table,
+            stats_table_p,
+            unicode_table_p,
+            final_table_lat,
+            final_table_cyr,
+            unseen_tokens_lat,
+            unseen_tokens_cyr
+        )
+
+    print(f"HTML report generated: {os.path.join(output_folder, 'report.html')}")
+    print(f"LaTeX report generated: {os.path.join(output_folder, 'report.tex')}")
+    print(f"PDF report generated: {os.path.join(output_folder, 'report.pdf')}")
+
 
 if __name__ == "__main__":
     run_it()

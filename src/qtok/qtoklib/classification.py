@@ -21,6 +21,7 @@ def get_classification(token2hits_tok):
         "code": defaultdict(list),
         "control_token": defaultdict(list),
         "unicode_flanks": defaultdict(list),
+
     }
 
     for token in token2hits_tok:
