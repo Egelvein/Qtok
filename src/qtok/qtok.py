@@ -41,7 +41,7 @@ def run_it():
 
     if not os.path.exists(tokenizer_file):
         try:
-            response = requests.get(url)
+            response = requests.get(tokenizer_file)
             if response.status_code == 200:
                 with open(tokenizer_file, 'wb') as f:
                     f.write(response.content)
