@@ -558,6 +558,11 @@ def generate_latex_report(output_folder, label, stats_table, stats_table_p, unic
     with open(os.path.join(output_folder, 'report.tex'), 'w', encoding='utf-8') as f:
         f.write(rendered_latex)
 
+
     # Компиляция LaTeX в PDF (требуется установленный pdflatex)
-    os.system(f"pdflatex -output-directory={output_folder} {os.path.join(output_folder, 'report.tex')}")
-    os.system(f"pdflatex -output-directory={output_folder} {os.path.join(output_folder, 'report.tex')}")  # Второй проход для корректной нумерации таблиц
+    ### check that pdflatex is installed
+    if os.system("pdflatex --version") != 0:
+        print("pdflatex is not installed. Please install it and try again to generate the pdf report.")
+    else:
+        os.system(f"pdflatex -output-directory={output_folder} {os.path.join(output_folder, 'report.tex')}")
+        os.system(f"pdflatex -output-directory={output_folder} {os.path.join(output_folder, 'report.tex')}")  # Второй проход для корректной нумерации таблиц
