@@ -25,12 +25,20 @@ def save_tsv_file(file_path, data):
             d = "\t".join(map(str, line))
             fw.write(f"{d}\n")
 
-def download_or_use_local(file_or_url, output_folder):
+def download_or_use_local(file_or_url, output_folder, label):
+    if not os.path.exists(output_folder):
+        os.makedirs(output_folder)
+
+    local_file = os.path.join(output_folder, f"tokenizer_{label}.json")
+
     if file_or_url.startswith(('http://', 'https://')):
+
+        if "huggingface.co" in file_or_url and "blob/main" in file_or_url:
+            file_or_url = file_or_url.replace("blob/main", "raw/main")
+
         try:
             response = requests.get(file_or_url)
             if response.status_code == 200:
-                local_file = os.path.join(output_folder, os.path.basename(file_or_url))
                 with open(local_file, 'wb') as f:
                     f.write(response.content)
                 print(f"File downloaded successfully and saved to {local_file}")
@@ -67,7 +75,7 @@ def run_it():
 
     model2vocab_tok = {}
     for file_or_url, label in zip(tokenizer_files_or_urls, labels):
-        local_file = download_or_use_local(file_or_url, output_folder)
+        local_file = download_or_use_local(file_or_url, output_folder, label)
         if local_file:
             model2vocab_tok[label] = load_vocab(local_file)
         else:
