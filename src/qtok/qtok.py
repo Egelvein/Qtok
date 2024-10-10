@@ -18,7 +18,6 @@ from collections import defaultdict
 from .qtoklib.tables import get_language_table
 from .qtoklib.report_generator import generate_html_report, generate_latex_report
 
-
 def save_tsv_file(file_path, data):
     with open(file_path, "w", encoding="utf-8") as fw:
         for line in data:
@@ -26,38 +25,56 @@ def save_tsv_file(file_path, data):
             d = "\t".join(map(str, line))
             fw.write(f"{d}\n")
 
+def download_or_use_local(file_or_url, output_folder):
+    if file_or_url.startswith(('http://', 'https://')):
+        try:
+            response = requests.get(file_or_url)
+            if response.status_code == 200:
+                local_file = os.path.join(output_folder, os.path.basename(file_or_url))
+                with open(local_file, 'wb') as f:
+                    f.write(response.content)
+                print(f"File downloaded successfully and saved to {local_file}")
+                return local_file
+            else:
+                print(f"Failed to download file. Status code: {response.status_code}")
+                return None
+        except Exception as e:
+            print(f"An error occurred while downloading: {e}")
+            return None
+    else:
+        if os.path.exists(file_or_url):
+            return file_or_url
+        else:
+            print(f"Local file not found: {file_or_url}")
+            return None
 
 def run_it():
-
     parser = argparse.ArgumentParser(description='Qtop: quality control tool for tokenizers')
-    parser.add_argument('-i', help='Tokenizer json file', required=True)
-    parser.add_argument('-l', help='Tokenizer label', required=False, default="default")
+    parser.add_argument('-i', help='Tokenizer json files or URLs', required=True, nargs='+')
+    parser.add_argument('-l', help='Tokenizer labels', required=True, nargs='+')
     parser.add_argument('-o', help='Output folder', required=True)
     args = parser.parse_args()
 
-    tokenizer_file = args.i
-    label = args.l
+    tokenizer_files_or_urls = args.i
+    labels = args.l
     output_folder = args.o
 
-    if not os.path.exists(tokenizer_file):
-        try:
-            response = requests.get(tokenizer_file)
-            if response.status_code == 200:
-                with open(tokenizer_file, 'wb') as f:
-                    f.write(response.content)
-                print(f"File downloaded successfully and saved to {tokenizer_file}")
-            else:
-                print(f"Failed to download file. Status code: {response.status_code}")
-        except Exception as e:
-            print(f"An error occurred: {e}")
-    else:
-        print("File already exists locally.")
+    if len(tokenizer_files_or_urls) != len(labels):
+        raise ValueError("Number of tokenizer files/URLs must match number of labels")
 
     if not os.path.exists(output_folder):
         os.makedirs(output_folder)
 
-    if not os.path.exists(tokenizer_file):
-        print(f"Tokenizer file {tokenizer_file} not found")
+    model2vocab_tok = {}
+    for file_or_url, label in zip(tokenizer_files_or_urls, labels):
+        local_file = download_or_use_local(file_or_url, output_folder)
+        if local_file:
+            model2vocab_tok[label] = load_vocab(local_file)
+        else:
+            print(f"Skipping tokenizer for label {label} due to file/download issues")
+
+    if not model2vocab_tok:
+        print("No valid tokenizer files found. Exiting.")
         return
 
     model2vocab_json_file = os.path.join(os.path.dirname(__file__), "data/model2vocab_tok.json")
@@ -69,32 +86,19 @@ def run_it():
     with open(token2his_json_file) as fh:
         token2hits = json.load(fh)
 
-    model2vocab[label] = load_vocab(tokenizer_file)
-
-    n_models = len(token2hits["A"])
-
-    for token, rank in model2vocab[label].items():
-        if token not in token2hits:
-            token2hits[token] = [0] * n_models + [rank]
-
-    for token in token2hits:
-        if token not in model2vocab[label]:
-            token2hits[token].append(0)
+    # Update model2vocab and token2hits with new tokenizers
+    for label, vocab in model2vocab_tok.items():
+        model2vocab[label] = vocab
+        for token, rank in vocab.items():
+            if token not in token2hits:
+                token2hits[token] = [0] * len(model2vocab) + [rank]
+            else:
+                token2hits[token].extend([0] * (len(model2vocab) - len(token2hits[token])) + [rank])
 
     token2meta, category2tokens = get_classification(token2hits)
 
     stats_table, stats_table_p = get_stats_table(model2vocab, token2hits, token2meta)
-
     unicode_table_p = get_unicode_tables(model2vocab, token2hits, token2meta)
-
-    for line in stats_table:
-        print("\t".join(map(str, line)))
-
-    for line in stats_table_p:
-        print("\t".join(map(str, line)))
-
-    for line in unicode_table_p:
-        print("\t".join(map(str, line)))
 
     file_path0 = os.path.join(output_folder, "basic_stats_abs.tsv")
     file_path1 = os.path.join(output_folder, "basic_stats.tsv")
@@ -112,8 +116,8 @@ def run_it():
     save_tsv_file(file_path1, stats_table_p)
     save_tsv_file(file_path2, unicode_table_p)
 
-    plot_with_distinct_markers_and_colors(label, file_path1, output_image_file1)
-    plot_with_distinct_markers_and_colors(label, file_path2, output_image_file2)
+    plot_with_distinct_markers_and_colors(labels, file_path1, output_image_file1)
+    plot_with_distinct_markers_and_colors(labels, file_path2, output_image_file2)
 
     tokens2natural_lat_file = os.path.join(os.path.dirname(__file__), "data/tokens2natural_lat.json")
     tokens2natural_cyr_file = os.path.join(os.path.dirname(__file__), "data/tokens2natural_cyr.json")
@@ -129,43 +133,36 @@ def run_it():
     save_tsv_file(file_path_lang_lat, final_table_lat)
     save_tsv_file(file_path_lang_cyr, final_table_cyr)
 
-    plot_with_distinct_markers_and_colors(label, file_path_lang_lat, output_image_file_lat)
-    plot_with_distinct_markers_and_colors(label, file_path_lang_cyr, output_image_file_cyr)
-
-    # print(category2tokens["pure_unicode"]["pure_unicode"])
-
-    # from .qtoklib.tokenizer import char_to_byte
-    # print(char_to_byte)
-    # print(len(char_to_byte))
+    plot_with_distinct_markers_and_colors(labels, file_path_lang_lat, output_image_file_lat)
+    plot_with_distinct_markers_and_colors(labels, file_path_lang_cyr, output_image_file_cyr)
 
     generate_html_report(
-            output_folder,
-            label,
-            stats_table,
-            stats_table_p,
-            unicode_table_p,
-            final_table_lat,
-            final_table_cyr,
-            unseen_tokens_lat,
-            unseen_tokens_cyr
-        )
+        output_folder,
+        labels,
+        stats_table,
+        stats_table_p,
+        unicode_table_p,
+        final_table_lat,
+        final_table_cyr,
+        unseen_tokens_lat,
+        unseen_tokens_cyr
+    )
 
     generate_latex_report(
-            output_folder,
-            label,
-            stats_table,
-            stats_table_p,
-            unicode_table_p,
-            final_table_lat,
-            final_table_cyr,
-            unseen_tokens_lat,
-            unseen_tokens_cyr
-        )
+        output_folder,
+        labels,
+        stats_table,
+        stats_table_p,
+        unicode_table_p,
+        final_table_lat,
+        final_table_cyr,
+        unseen_tokens_lat,
+        unseen_tokens_cyr
+    )
 
     print(f"HTML report generated: {os.path.join(output_folder, 'report.html')}")
     print(f"LaTeX report generated: {os.path.join(output_folder, 'report.tex')}")
     print(f"PDF report generated: {os.path.join(output_folder, 'report.pdf')}")
-
 
 if __name__ == "__main__":
     run_it()

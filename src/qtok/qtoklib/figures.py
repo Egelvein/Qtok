@@ -3,41 +3,18 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 colors = [
-    '#5da3ce',  # moderately blue
-    '#ffa347',  # moderately orange
-    '#6fbf58',  # moderately green
-    '#e77f80',  # moderately red
-    '#b28ac9',  # moderately violet
-    '#aa7c70',  # moderately brown
-    '#ec9ad3',  # moderately pink
-    '#a6a6a6',  # moderately gray
-    '#cece58',  # moderately olive
-    '#5ad0dc',  # moderately turquoise
-    '#6b6da1',  # moderately dark blue
-    '#82996a',  # moderately dark green
-    '#b69b5d',  # moderately dark brown
-    '#ab5e5c',  # moderately dark red
-    '#5da3ce',  # moderately blue
-    '#ffa347',  # moderately orange
-    '#6fbf58',  # moderately green
-    '#e77f80',  # moderately red
-    '#b28ac9',  # moderately violet
-    '#aa7c70',  # moderately brown
-    '#ec9ad3',  # moderately pink
-    '#a6a6a6',  # moderately gray
-    '#cece58',  # moderately olive
-    '#5ad0dc',  # moderately turquoise
-    '#6b6da1',  # moderately dark blue
-    '#82996a',  # moderately dark green
-    '#b69b5d',  # moderately dark brown
-    '#ab5e5c',  # moderately dark red
+    '#5da3ce', '#ffa347', '#6fbf58', '#e77f80', '#b28ac9',
+    '#aa7c70', '#ec9ad3', '#a6a6a6', '#cece58', '#5ad0dc',
+    '#6b6da1', '#82996a', '#b69b5d', '#ab5e5c', '#5da3ce',
+    '#ffa347', '#6fbf58', '#e77f80', '#b28ac9', '#aa7c70',
+    '#ec9ad3', '#a6a6a6', '#cece58', '#5ad0dc', '#6b6da1',
+    '#82996a', '#b69b5d', '#ab5e5c'
 ]
 
 markers = ['o', 's', '^', 'D', 'v', 'P', '*', 'X', '<', '>', 'h', 'd', '8', 'H']
 markers += reversed(markers)
 
-def plot_with_distinct_markers_and_colors(label, file_path, output_image_file):
-
+def plot_with_distinct_markers_and_colors(labels, file_path, output_image_file):
     data_normalized = pd.read_csv(file_path, sep="\t")
 
     parameters = [param.replace('_', ' ') for param in data_normalized.columns[1:]]
@@ -45,7 +22,7 @@ def plot_with_distinct_markers_and_colors(label, file_path, output_image_file):
     fig, ax = plt.subplots(figsize=(15, 10))
 
     tokenizers = data_normalized['Tokenizer'].unique()
-    num_tokenizers = len(tokenizers)    
+    num_tokenizers = len(tokenizers)
 
     if num_tokenizers > len(colors):
         raise ValueError(f"The number of tokenizers ({num_tokenizers}) exceeds the available number of colors ({len(colors)}). Please add more colors.")
@@ -68,7 +45,6 @@ def plot_with_distinct_markers_and_colors(label, file_path, output_image_file):
         ax.errorbar(
             x,
             values,
-            # yerr=std_dev,
             fmt=style['marker'],
             color=style['color'],
             capsize=5,
@@ -83,7 +59,6 @@ def plot_with_distinct_markers_and_colors(label, file_path, output_image_file):
 
     if 'Qtok' in tokenizers:
         joined_data = data_normalized[data_normalized['Tokenizer'] == 'Qtok'].values[0][1:]
-
         tokenizer_styles['Qtok'] = {
             'color': '#a6cee3',
             'marker': 'o',
@@ -92,20 +67,20 @@ def plot_with_distinct_markers_and_colors(label, file_path, output_image_file):
         for i, (xi, yi) in enumerate(zip(x, joined_data)):
             ax.plot(xi, yi, marker='o', markersize=12, markeredgecolor='black',
                     markerfacecolor='#a6cee3', linestyle='None', zorder=8)
-            
 
-    if label in tokenizers:
-        joined_data = data_normalized[data_normalized['Tokenizer'] == label].values[0][1:]
-        tokenizer_styles[label] = {
-            'color': '#e77f80',
-            'marker': 'o',
-            'label': label
-        }
-        for i, (xi, yi) in enumerate(zip(x, joined_data)):
-            ax.plot(xi, yi, marker='o', markersize=12, markeredgecolor='black',
-                    markerfacecolor='#e77f80', linestyle='None', zorder=12)
+    for label in labels:
+        if label in tokenizers and label != 'Qtok':
+            joined_data = data_normalized[data_normalized['Tokenizer'] == label].values[0][1:]
+            tokenizer_styles[label] = {
+                'color': '#e77f80',
+                'marker': 'o',
+                'label': label
+            }
+            for i, (xi, yi) in enumerate(zip(x, joined_data)):
+                ax.plot(xi, yi, marker='o', markersize=12, markeredgecolor='black',
+                        markerfacecolor='#e77f80', linestyle='None', zorder=12)
 
-    handles, labels = ax.get_legend_handles_labels()
+    handles, labels_legend = ax.get_legend_handles_labels()
 
     if 'Qtok' in tokenizer_styles:
         joined_style = tokenizer_styles['Qtok']
@@ -113,20 +88,21 @@ def plot_with_distinct_markers_and_colors(label, file_path, output_image_file):
                                    markerfacecolor=joined_style['color'],
                                    markeredgecolor='black', markersize=8, label=joined_style['label'])
         handles.append(joined_marker)
-        labels.append('Qtok')
+        labels_legend.append('Qtok')
 
-    if label in tokenizer_styles:
-        joined_style = tokenizer_styles[label]
-        joined_marker = plt.Line2D([0], [0], marker='o', color='w',
-                                   markerfacecolor=joined_style['color'],
-                                   markeredgecolor='black', markersize=12, label=joined_style['label'])
-        handles.append(joined_marker)
-        labels.append(label)
+    for label in labels:
+        if label in tokenizer_styles and label != 'Qtok':
+            joined_style = tokenizer_styles[label]
+            joined_marker = plt.Line2D([0], [0], marker='o', color='w',
+                                       markerfacecolor=joined_style['color'],
+                                       markeredgecolor='black', markersize=12, label=joined_style['label'])
+            handles.append(joined_marker)
+            labels_legend.append(label)
 
     handles = handles[1:]
-    labels = labels[1:]
+    labels_legend = labels_legend[1:]
 
-    ax.legend(handles=handles, labels=labels, title='Tokenizer', bbox_to_anchor=(1.05, 1), loc='upper left')
+    ax.legend(handles=handles, labels=labels_legend, title='Tokenizer', bbox_to_anchor=(1.05, 1), loc='upper left')
 
     ax.yaxis.set_major_formatter(plt.FuncFormatter(lambda y, _: f'{y:.2f}'))
 

@@ -8,7 +8,7 @@ def image_to_base64(image_path):
     with open(image_path, "rb") as image_file:
         return base64.b64encode(image_file.read()).decode('utf-8')
 
-def generate_html_report(output_folder, label, stats_table, stats_table_p, unicode_table_p,
+def generate_html_report(output_folder, labels, stats_table, stats_table_p, unicode_table_p,
                          final_table_lat, final_table_cyr, unseen_tokens_lat, unseen_tokens_cyr):
 
     # Convert images to base64
@@ -253,7 +253,7 @@ def generate_html_report(output_folder, label, stats_table, stats_table_p, unico
     """
 
     rendered_html = Template(template).render(
-        label=label,
+        labels=labels,
         stats_table_p=stats_table_p,
         unicode_table_p=unicode_table_p,
         final_table_lat=final_table_lat,
@@ -268,29 +268,29 @@ def generate_html_report(output_folder, label, stats_table, stats_table_p, unico
     with open(os.path.join(output_folder, 'report.html'), 'w', encoding='utf-8') as f:
         f.write(rendered_html)
 
-def generate_latex_report(output_folder, label, stats_table, stats_table_p, unicode_table_p,
+def generate_latex_report(output_folder, labels, stats_table, stats_table_p, unicode_table_p,
                           final_table_lat, final_table_cyr, unseen_tokens_lat, unseen_tokens_cyr):
     latex_template = r"""
-\documentclass{article}
-\usepackage[utf8]{inputenc}
-\usepackage{graphicx}
-\usepackage{booktabs}
-\usepackage{longtable}
-\usepackage{array}
-\usepackage{pdflscape}
-\usepackage{geometry}
-\usepackage{caption}
-\usepackage{makecell}
+    \documentclass{article}
+    \usepackage[utf8]{inputenc}
+    \usepackage{graphicx}
+    \usepackage{booktabs}
+    \usepackage{longtable}
+    \usepackage{array}
+    \usepackage{pdflscape}
+    \usepackage{geometry}
+    \usepackage{caption}
+    \usepackage{makecell}
 
-\geometry{margin=2cm}
+    \geometry{margin=2cm}
 
-\title{Qtok Analysis Report for {{ label }}}
-\author{Qtok}
-\date{\today}
+    \title{Qtok Analysis Report for {{ labels|join(', ') }}}
+    \author{Qtok}
+    \date{\today}
 
-\begin{document}
+    \begin{document}
 
-\maketitle
+    \maketitle
 
 \section{Basic Statistics}
 
@@ -520,30 +520,26 @@ def generate_latex_report(output_folder, label, stats_table, stats_table_p, unic
 \end{longtable}
 \end{landscape}
 
-\end{document}
+    \end{document}
     """
 
+    # Process table headers
     stats_table_p[0] = [r" \\ ".join(x.split("_")) for x in stats_table_p[0]]
     unicode_table_p[0] = [r" \\ ".join(x.split(" ")) for x in unicode_table_p[0]]
     final_table_lat[0] = [r" \\ ".join(x.split("_")) for x in final_table_lat[0]]
     final_table_cyr[0] = [r" \\ ".join(x.split("_")) for x in final_table_cyr[0]]
     stats_table[0] = [r" \\ ".join(x.split("_")) for x in stats_table[0]]
 
-
-    ### split table unicode_table_p into two parts by columns
+    # Split unicode table
     n = len(unicode_table_p[0])//2
-
     unicode_table_p1 = [unicode_table_p[0][:n]]
-    for i in range(1, len(unicode_table_p)):
-        unicode_table_p1.append(unicode_table_p[i][:n])
-
-
     unicode_table_p2 = [[unicode_table_p[0][0]] + list(unicode_table_p[0][n:])]
     for i in range(1, len(unicode_table_p)):
-        unicode_table_p2.append( [unicode_table_p[i][0]] + list(unicode_table_p[i][n:]))
+        unicode_table_p1.append(unicode_table_p[i][:n])
+        unicode_table_p2.append([unicode_table_p[i][0]] + list(unicode_table_p[i][n:]))
 
     rendered_latex = Template(latex_template).render(
-        label=label,
+        labels=labels,
         stats_table_p=stats_table_p,
         unicode_table_p1=unicode_table_p1,
         unicode_table_p2=unicode_table_p2,
@@ -552,17 +548,12 @@ def generate_latex_report(output_folder, label, stats_table, stats_table_p, unic
         stats_table=stats_table
     )
 
-    # rendered_latex = rendered_latex.replace("newline", "\\newline ")
-
-
     with open(os.path.join(output_folder, 'report.tex'), 'w', encoding='utf-8') as f:
         f.write(rendered_latex)
 
-
-    # Компиляция LaTeX в PDF (требуется установленный pdflatex)
-    ### check that pdflatex is installed
+    # Compile LaTeX to PDF
     if os.system("pdflatex --version") != 0:
         print("pdflatex is not installed. Please install it and try again to generate the pdf report.")
     else:
         os.system(f"pdflatex -output-directory={output_folder} {os.path.join(output_folder, 'report.tex')}")
-        os.system(f"pdflatex -output-directory={output_folder} {os.path.join(output_folder, 'report.tex')}")  # Второй проход для корректной нумерации таблиц
+        os.system(f"pdflatex -output-directory={output_folder} {os.path.join(output_folder, 'report.tex')}")
