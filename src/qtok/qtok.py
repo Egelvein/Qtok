@@ -6,6 +6,7 @@
 # @contact: ad3002@gmail.com
 
 import argparse
+import requests
 import os
 from .qtoklib.tokenizer import load_vocab
 import json
@@ -37,6 +38,20 @@ def run_it():
     tokenizer_file = args.i
     label = args.l
     output_folder = args.o
+
+    if not os.path.exists(tokenizer_file):
+        try:
+            response = requests.get(url)
+            if response.status_code == 200:
+                with open(tokenizer_file, 'wb') as f:
+                    f.write(response.content)
+                print(f"File downloaded successfully and saved to {tokenizer_file}")
+            else:
+                print(f"Failed to download file. Status code: {response.status_code}")
+        except Exception as e:
+            print(f"An error occurred: {e}")
+    else:
+        print("File already exists locally.")
 
     if not os.path.exists(output_folder):
         os.makedirs(output_folder)
