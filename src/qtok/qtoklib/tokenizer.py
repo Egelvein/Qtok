@@ -184,6 +184,13 @@ def load_vocab(tokenizer_file):
 
     with open(tokenizer_file, "r") as fr:
         tokenizer = json.load(fr)
+    if not "model" in tokenizer and "vocab" in tokenizer:
+       tokenizer["model"] = {"vocab": tokenizer["vocab"]}
+    if "mama" in tokenizer:
+       tokenizer["model"] = {
+          "vocab": tokenizer
+       }
+       
         
     should_be_fixed = "ма" not in text_data
     print("should_be_fixed", should_be_fixed)
