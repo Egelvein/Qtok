@@ -4,7 +4,7 @@ Qtok is a Python-based tool designed for quality control and analysis of tokeniz
 
 ## Features
 
-- Analyze tokenizer vocabularies
+- Analyze multiple tokenizer vocabularies simultaneously
 - Generate statistics on token distribution
 - Produce visualizations of token characteristics
 - Compare multiple tokenizers
@@ -32,22 +32,29 @@ pip install .
 Qtok can be used as a command-line tool:
 
 ```bash
-qtok -i /path/to/tokenizer.json -l tokenizer_label -o /path/to/output/folder
+qtok -i /path/to/tokenizer1.json /path/to/tokenizer2.json ... -l label1 label2 ... -o /path/to/output/folder
 ```
 
 Arguments:
-- `-i`: Path to the tokenizer JSON file (required)
-- `-l`: Label for the tokenizer (optional, default is "default")
+- `-i`: Paths to the tokenizer JSON files or URLs (required, multiple inputs accepted)
+- `-l`: Labels for the tokenizers (required, must match the number of input files)
 - `-o`: Output folder for results (required)
+
+Example:
+```bash
+qtok -i tokenizer1.json https://example.com/tokenizer2.json tokenizer3.json -l label1 label2 label3 -o output_folder
+```
 
 ## Output
 
 Qtok generates several output files:
 
-1. `basic_stats.tsv` and `basic_stats.png`: Basic statistics of the tokenizer
+1. `basic_stats.tsv` and `basic_stats.png`: Basic statistics of the tokenizers
 2. `unicode_stats.tsv` and `unicode_stats.png`: Unicode coverage statistics
 3. `latin_stats.tsv` and `latin_stats.png`: Statistics for Latin script tokens
 4. `cyrillic_stats.tsv` and `cyrillic_stats.png`: Statistics for Cyrillic script tokens
+5. `report.html`: An HTML report summarizing all analyses
+6. `report.tex` and `report.pdf`: LaTeX and PDF versions of the report (if pdflatex is installed)
 
 ## Requirements
 
@@ -55,6 +62,7 @@ Qtok generates several output files:
 - matplotlib
 - numpy
 - pandas
+- requests
 
 ## Contributing
 
