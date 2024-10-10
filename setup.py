@@ -18,7 +18,7 @@ else:
         "requests",
     ]
 
-version = "0.10.2"
+version = "0.10.3"
 
 setup(
     name="Qtok",
