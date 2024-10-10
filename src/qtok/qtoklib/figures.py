@@ -5,10 +5,10 @@ import numpy as np
 colors = [
     '#5da3ce', '#ffa347', '#6fbf58', '#e77f80', '#b28ac9',
     '#aa7c70', '#ec9ad3', '#a6a6a6', '#cece58', '#5ad0dc',
-    '#6b6da1', '#82996a', '#b69b5d', '#ab5e5c', '#5da3ce',
+    '#6b6da1', '#82996a', '#b69b5d', '#ab5c5c', '#5da3ce',
     '#ffa347', '#6fbf58', '#e77f80', '#b28ac9', '#aa7c70',
     '#ec9ad3', '#a6a6a6', '#cece58', '#5ad0dc', '#6b6da1',
-    '#82996a', '#b69b5d', '#ab5e5c'
+    '#82996a', '#b69b5d', '#ab5c5c'
 ]
 
 markers = ['o', 's', '^', 'D', 'v', 'P', '*', 'X', '<', '>', 'h', 'd', '8', 'H']
@@ -39,7 +39,6 @@ def plot_with_distinct_markers_and_colors(labels, file_path, output_image_file):
 
     for tokenizer in tokenizers:
         values = data_normalized[data_normalized['Tokenizer'] == tokenizer].values[0][1:]
-        std_dev = np.std(values) / np.sqrt(len(values))
         style = tokenizer_styles[tokenizer]
 
         ax.errorbar(
@@ -71,14 +70,10 @@ def plot_with_distinct_markers_and_colors(labels, file_path, output_image_file):
     for label in labels:
         if label in tokenizers and label != 'Qtok':
             joined_data = data_normalized[data_normalized['Tokenizer'] == label].values[0][1:]
-            tokenizer_styles[label] = {
-                'color': '#e77f80',
-                'marker': 'o',
-                'label': label
-            }
+            style = tokenizer_styles[label]
             for i, (xi, yi) in enumerate(zip(x, joined_data)):
-                ax.plot(xi, yi, marker='o', markersize=12, markeredgecolor='black',
-                        markerfacecolor='#e77f80', linestyle='None', zorder=12)
+                ax.plot(xi, yi, marker=style['marker'], markersize=12, markeredgecolor='black',
+                        markerfacecolor=style['color'], linestyle='None', zorder=12)
 
     handles, labels_legend = ax.get_legend_handles_labels()
 
@@ -93,7 +88,7 @@ def plot_with_distinct_markers_and_colors(labels, file_path, output_image_file):
     for label in labels:
         if label in tokenizer_styles and label != 'Qtok':
             joined_style = tokenizer_styles[label]
-            joined_marker = plt.Line2D([0], [0], marker='o', color='w',
+            joined_marker = plt.Line2D([0], [0], marker=joined_style['marker'], color='w',
                                        markerfacecolor=joined_style['color'],
                                        markeredgecolor='black', markersize=12, label=joined_style['label'])
             handles.append(joined_marker)

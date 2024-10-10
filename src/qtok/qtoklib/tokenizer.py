@@ -175,7 +175,6 @@ def load_vocab(tokenizer_file):
     
     with open(tokenizer_file) as fh:
       text_data = fh.read()
-
     replace = None
     if text_data.count("▁") > text_data.count("Ġ"):
       replace = "▁"
