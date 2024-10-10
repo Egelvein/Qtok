@@ -17,7 +17,7 @@ else:
         "jinja2",
     ]
 
-version = "0.9.5"
+version = "0.9.6"
 
 setup(
     name="Qtok",
