@@ -1,0 +1,67 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" viewBox="0 0 800 600">
+    <defs>
+        <style type="text/css">
+            @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&amp;display=swap');
+            .rect { rx: 10; ry: 10; }
+            .text { font-family: 'Roboto', sans-serif; fill: #333; }
+            .title { font-size: 18px; font-weight: bold; }
+            .subtitle { font-size: 16px; font-weight: bold; }
+            .content { font-size: 14px; }
+            .arrow { fill: none; stroke: #555; stroke-width: 2; marker-end: url(#arrowhead); }
+        </style>
+        <filter id="shadow">
+            <feDropShadow dx="2" dy="2" stdDeviation="2" flood-color="#00000033"/>
+        </filter>
+        <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="0" refY="3.5" orient="auto">
+            <polygon points="0 0, 10 3.5, 0 7" fill="#555"/>
+        </marker>
+    </defs>
+    
+    <!-- Input Tokenizers -->
+    <rect x="50" y="50" width="200" height="260" class="rect" fill="#a8e6cf" stroke="#7cb342" filter="url(#shadow)" />
+    <text x="150" y="80" text-anchor="middle" class="text title">Input Tokenizers</text>
+    <rect x="60" y="100" width="180" height="50" class="rect" fill="#ffffff" stroke="#7cb342" />
+    <text x="150" y="130" text-anchor="middle" class="text content">Local JSON files</text>
+    <rect x="60" y="160" width="180" height="50" class="rect" fill="#ffffff" stroke="#7cb342" />
+    <text x="150" y="190" text-anchor="middle" class="text content">Web URLs to JSON files</text>
+    <rect x="60" y="220" width="180" height="50" class="rect" fill="#ffffff" stroke="#7cb342" />
+    <text x="150" y="250" text-anchor="middle" class="text content">Multiple tokenizers</text>
+    
+    <!-- Statistics -->
+    <rect x="300" y="50" width="200" height="260" class="rect" fill="#ffd3b6" stroke="#ff7043" filter="url(#shadow)" />
+    <text x="400" y="80" text-anchor="middle" class="text title">Statistics</text>
+    <rect x="310" y="100" width="180" height="50" class="rect" fill="#ffffff" stroke="#ff7043" />
+    <text x="400" y="130" text-anchor="middle" class="text content">Basic</text>
+    <rect x="310" y="160" width="180" height="50" class="rect" fill="#ffffff" stroke="#ff7043" />
+    <text x="400" y="190" text-anchor="middle" class="text content">Unicode</text>
+    <rect x="310" y="220" width="180" height="50" class="rect" fill="#ffffff" stroke="#ff7043" />
+    <text x="400" y="245" text-anchor="middle" class="text content">Latin/Cyrillic Languages</text>
+    
+    <!-- Output -->
+    <rect x="550" y="50" width="200" height="260" class="rect" fill="#b5e8ff" stroke="#4fc3f7" filter="url(#shadow)" />
+    <text x="650" y="80" text-anchor="middle" class="text title">Output</text>
+    <rect x="560" y="100" width="180" height="50" class="rect" fill="#ffffff" stroke="#4fc3f7" />
+    <text x="650" y="130" text-anchor="middle" class="text content">HTML Report</text>
+    <rect x="560" y="160" width="180" height="50" class="rect" fill="#ffffff" stroke="#4fc3f7" />
+    <text x="650" y="190" text-anchor="middle" class="text content">TSV Files / PNG Images</text>
+    <rect x="560" y="220" width="180" height="50" class="rect" fill="#ffffff" stroke="#4fc3f7" />
+    <text x="650" y="250" text-anchor="middle" class="text content">LaTeX and PDF Reports</text>
+    
+    <!-- Qtok Combined Vocabulary -->
+    <rect x="50" y="360" width="700" height="120" class="rect" fill="#fff59d" stroke="#fbc02d" filter="url(#shadow)" />
+    <text x="400" y="390" text-anchor="middle" class="text title">Qtok Combined Vocabulary</text>
+    <rect x="60" y="410" width="220" height="40" class="rect" fill="#ffffff" stroke="#fbc02d" />
+    <text x="170" y="435" text-anchor="middle" class="text content">58 models (Chatbot Arena)</text>
+    <rect x="290" y="410" width="220" height="40" class="rect" fill="#ffffff" stroke="#fbc02d" />
+    <text x="400" y="435" text-anchor="middle" class="text content">13 unique tokenizers</text>
+    <rect x="520" y="410" width="220" height="40" class="rect" fill="#ffffff" stroke="#fbc02d" />
+    <text x="630" y="435" text-anchor="middle" class="text content">430K unique tokens</text>
+    
+    <!-- Arrows -->
+    <line x1="250" y1="180" x2="290" y2="180" class="arrow" />
+    <line x1="400" y1="310" x2="400" y2="350" class="arrow" />
+    <line x1="500" y1="180" x2="540" y2="180" class="arrow" />
+    
+    <!-- Main Title -->
+    <text x="400" y="520" text-anchor="middle" class="text title" fill="#333">Qtok: Quality Control Tool for Tokenizers</text>
+</svg>

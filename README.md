@@ -45,6 +45,8 @@ Example:
 qtok -i tokenizer1.json https://example.com/tokenizer2.json tokenizer3.json -l label1 label2 label3 -o output_folder
 ```
 
+![Qtok Pipeline](images/pipeline.svg)
+
 ## Output
 
 Qtok generates several output files:
