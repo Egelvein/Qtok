@@ -5,9 +5,7 @@
 # @author: Aleksey Komissarov
 # @contact: ad3002@gmail.com
 
-import os
 import json
-import re
 import sys
 
 def generate_bytes_char_mapping():
