@@ -7,6 +7,8 @@
 
 import os
 import json
+import re
+import sys
 
 def generate_bytes_char_mapping():
     """
@@ -172,24 +174,39 @@ def byte_level_decode_custom(encoded_string, char_to_byte, encoding='utf-8'):
 def load_vocab(tokenizer_file):
 
     vocab = {}
-    
-    with open(tokenizer_file) as fh:
-      text_data = fh.read()
-    replace = None
-    if text_data.count("▁") > text_data.count("Ġ"):
-      replace = "▁"
-    elif text_data.count("\u0120") > text_data.count("Ġ"):
-      replace = "\u0120"
-
 
     with open(tokenizer_file, "r") as fr:
         tokenizer = json.load(fr)
-    if not "model" in tokenizer and "vocab" in tokenizer:
-       tokenizer["model"] = {"vocab": tokenizer["vocab"]}
-    if "mama" in tokenizer:
-       tokenizer["model"] = {
-          "vocab": tokenizer
-       }
+    if not "model" in tokenizer:
+        if "vocab" in tokenizer:
+            tokenizer["model"] = {"vocab": tokenizer["vocab"]}
+        if "mama" in tokenizer:
+            tokenizer["model"] = {
+                "vocab": tokenizer
+            }
+        with open(tokenizer_file, "w") as fw:
+            json.dump(tokenizer, fw, indent=2)
+
+    ### rare case with negative ranks
+    if "model" in tokenizer and "vocab" in tokenizer["model"]:
+        if isinstance(tokenizer["model"]["vocab"], list):
+            print("Bad format for vocab")
+            sys.exit(1)
+    
+    with open(tokenizer_file) as fh:
+        text_data = fh.read()
+
+    replacers = [
+         ( text_data.count("▁"), "▁"),
+         ( text_data.count("Ġ"), "Ġ"),
+         ( text_data.count("\u0120"), "\u0120"),
+         ( text_data.count("\t"), "\t"),
+         ( text_data.count("\u2581"), "\u2581"),
+    ]
+    replacers.sort()
+    replace = replacers[-1][1]
+    if replace == "Ġ":
+        replace = None
        
         
     should_be_fixed = "ма" not in text_data
