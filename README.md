@@ -11,7 +11,7 @@ Qtok is a Python-based tool designed for quality control and analysis of tokeniz
 - Analyze Unicode coverage
 - Assess language-specific token distributions (Latin and Cyrillic scripts)
 
-![Qtok Pipeline](images/pipeline.svg)
+![Qtok Pipeline](https://raw.githubusercontent.com/nup-csai/Qtok/main/images/pipeline.svg)
 
 ## Installation
 
@@ -70,6 +70,12 @@ Qtok generates several output files:
 - numpy
 - pandas
 - requests
+
+## Reproducibility
+
+For full tables and data, please refer to the Jupyter notebook available at:
+
+[Qtok/paper/Qtok_v3.ipynb](https://raw.githubusercontent.com/nup-csai/Qtok/main/paper/Qtok_v3.ipynb)
 
 ## Contributing
 
