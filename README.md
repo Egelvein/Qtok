@@ -75,8 +75,7 @@ Qtok generates several output files:
 
 For full tables and data, please refer to the Jupyter notebook available at:
 
-[Qtok/paper/Qtok_v3.ipynb](https://raw.githubusercontent.com/nup-csai/Qtok/main/paper/Qtok_v3.ipynb)
-
+[Qtok/paper/Qtok_v3.ipynb](https://github.com/nup-csai/Qtok/blob/main/paper/Qtok_v3.ipynb)
 ## Contributing
 
 Contributions to Qtok are welcome! Please feel free to submit a Pull Request.
