@@ -56,6 +56,7 @@ def plot_with_distinct_markers_and_colors(labels, file_path, output_image_file):
 
     ax.set_ylabel("Normalized Value (%)")
 
+    # Добавление меток для Qtok с большой иконкой
     if 'Qtok' in tokenizers:
         joined_data = data_normalized[data_normalized['Tokenizer'] == 'Qtok'].values[0][1:]
         tokenizer_styles['Qtok'] = {
@@ -67,6 +68,7 @@ def plot_with_distinct_markers_and_colors(labels, file_path, output_image_file):
             ax.plot(xi, yi, marker='o', markersize=12, markeredgecolor='black',
                     markerfacecolor='#a6cee3', linestyle='None', zorder=8)
 
+    # Добавление меток для других токенизаторов
     for label in labels:
         if label in tokenizers and label != 'Qtok':
             joined_data = data_normalized[data_normalized['Tokenizer'] == label].values[0][1:]
@@ -77,27 +79,15 @@ def plot_with_distinct_markers_and_colors(labels, file_path, output_image_file):
 
     handles, labels_legend = ax.get_legend_handles_labels()
 
-    if 'Qtok' in tokenizer_styles:
-        joined_style = tokenizer_styles['Qtok']
-        joined_marker = plt.Line2D([0], [0], marker='o', color='w',
-                                   markerfacecolor=joined_style['color'],
-                                   markeredgecolor='black', markersize=8, label=joined_style['label'])
-        handles.append(joined_marker)
-        labels_legend.append('Qtok')
+    # Удаление дублирующихся меток
+    unique_labels = []
+    unique_handles = []
+    for handle, label in zip(handles, labels_legend):
+        if label not in unique_labels:
+            unique_labels.append(label)
+            unique_handles.append(handle)
 
-    for label in labels:
-        if label in tokenizer_styles and label != 'Qtok':
-            joined_style = tokenizer_styles[label]
-            joined_marker = plt.Line2D([0], [0], marker=joined_style['marker'], color='w',
-                                       markerfacecolor=joined_style['color'],
-                                       markeredgecolor='black', markersize=12, label=joined_style['label'])
-            handles.append(joined_marker)
-            labels_legend.append(label)
-
-    handles = handles[1:]
-    labels_legend = labels_legend[1:]
-
-    ax.legend(handles=handles, labels=labels_legend, title='Tokenizer', bbox_to_anchor=(1.05, 1), loc='upper left')
+    ax.legend(handles=unique_handles, labels=unique_labels, title='Tokenizer', bbox_to_anchor=(1.05, 1), loc='upper left')
 
     ax.yaxis.set_major_formatter(plt.FuncFormatter(lambda y, _: f'{y:.2f}'))
 

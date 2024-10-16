@@ -3,6 +3,7 @@
 import os
 import base64
 from jinja2 import Template
+import subprocess
 
 def image_to_base64(image_path):
     with open(image_path, "rb") as image_file:
@@ -253,7 +254,7 @@ def generate_html_report(output_folder, labels, stats_table, stats_table_p, unic
     """
 
     rendered_html = Template(template).render(
-        labels=labels,
+        label=", ".join(labels),
         stats_table_p=stats_table_p,
         unicode_table_p=unicode_table_p,
         final_table_lat=final_table_lat,
@@ -552,8 +553,8 @@ def generate_latex_report(output_folder, labels, stats_table, stats_table_p, uni
         f.write(rendered_latex)
 
     # Compile LaTeX to PDF
-    if os.system("pdflatex --version") != 0:
+    if subprocess.run(["pdflatex", "--version"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL).returncode != 0:
         print("pdflatex is not installed. Please install it and try again to generate the pdf report.")
     else:
-        os.system(f"pdflatex -output-directory={output_folder} {os.path.join(output_folder, 'report.tex')}")
-        os.system(f"pdflatex -output-directory={output_folder} {os.path.join(output_folder, 'report.tex')}")
+        subprocess.run(["pdflatex", "-output-directory", output_folder, os.path.join(output_folder, 'report.tex')], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        subprocess.run(["pdflatex", "-output-directory", output_folder, os.path.join(output_folder, 'report.tex')], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)

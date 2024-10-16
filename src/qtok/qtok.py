@@ -21,7 +21,7 @@ from .qtoklib.report_generator import generate_html_report, generate_latex_repor
 def save_tsv_file(file_path, data):
     with open(file_path, "w", encoding="utf-8") as fw:
         for line in data:
-            print("\t".join(map(str, line)))
+            # print("\t".join(map(str, line)))
             d = "\t".join(map(str, line))
             fw.write(f"{d}\n")
 

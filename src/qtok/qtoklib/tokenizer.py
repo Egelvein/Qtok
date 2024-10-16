@@ -208,7 +208,6 @@ def load_vocab(tokenizer_file):
        
         
     should_be_fixed = "ма" not in text_data
-    print("should_be_fixed", should_be_fixed)
     for raw_token, rid, in tokenizer["model"]["vocab"].items():
         
         rr = raw_token

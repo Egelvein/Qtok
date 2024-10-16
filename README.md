@@ -11,6 +11,8 @@ Qtok is a Python-based tool designed for quality control and analysis of tokeniz
 - Analyze Unicode coverage
 - Assess language-specific token distributions (Latin and Cyrillic scripts)
 
+![Qtok Pipeline](images/pipeline.svg)
+
 ## Installation
 
 You can install Qtok using pip:
@@ -42,10 +44,13 @@ Arguments:
 
 Example:
 ```bash
-qtok -i tokenizer1.json https://example.com/tokenizer2.json tokenizer3.json -l label1 label2 label3 -o output_folder
+qtok -i /path/to/tokenizer1.json /path/to/tokenizer2.json ... -l label1 label2 ... -o /path/to/output/folder
 ```
 
-![Qtok Pipeline](images/pipeline.svg)
+- Arguments:
+  - `-i`: Paths to the tokenizer JSON files or URLs (required, multiple inputs accepted)
+  - `-l`: Labels for the tokenizers (required, must match the number of input files)
+  - `-o`: Output folder for results (required)
 
 ## Output
 
