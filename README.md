@@ -48,6 +48,11 @@ Example:
 qtok -i /path/to/tokenizer1.json /path/to/tokenizer2.json -l label1 label2 -o /path/to/output/folder --latex
 ```
 
+- Arguments:
+  - `-i`: Paths to the tokenizer JSON files or URLs (required, multiple inputs accepted)
+  - `-l`: Labels for the tokenizers (required, must match the number of input files)
+  - `-o`: Output folder for results (required)
+
 ## Output
 
 Qtok generates several output files:
