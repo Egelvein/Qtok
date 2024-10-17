@@ -1,6 +1,7 @@
 import unicodedata
 from collections import defaultdict
 from .tokenizer import char_to_byte
+from tqdm import tqdm
 
 LANGUAGES = ['ADLAM', 'CHAKMA', 'OL', 'BAMUM', 'OGHAM', 'BOPOMOFO', 'COPTIC', 'RUNIC', 'HALFWIDTH',
                     'MODI', 'KAITHI', 'LEPCHA', 'SHAVIAN', 'LIMBU', 'BATAK', 'PHOENICIAN', 'GLAGOLITIC', 'MANDAIC', 'BALINESE', 'SAMARITAN', 'PHAGS-PA', 'OLD', 'BLACK-LETTER', 'SUNDANESE', 'INSCRIPTIONAL', 'LISU', 'CHAM', 'TAGALOG', 'DESERET', 'TAGBANWA',
@@ -24,7 +25,7 @@ def get_classification(token2hits_tok):
 
     }
 
-    for token in token2hits_tok:
+    for token in tqdm(token2hits_tok, desc="Classifying tokens"):
         if len(token) == 1:
             if token in char_to_byte:
                 token2meta[token] = ("pure_unicode", "pure_unicode")

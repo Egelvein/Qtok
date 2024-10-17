@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # @created: 20.09.2024
+# @updated: 20.09.2024 (added progress bars using tqdm)
 # @author: Aleksey Komissarov
 # @contact: ad3002@gmail.com
 
@@ -17,11 +18,11 @@ from .qtoklib.figures import plot_with_distinct_markers_and_colors
 from collections import defaultdict
 from .qtoklib.tables import get_language_table
 from .qtoklib.report_generator import generate_html_report, generate_latex_report
+from tqdm import tqdm
 
 def save_tsv_file(file_path, data):
     with open(file_path, "w", encoding="utf-8") as fw:
         for line in data:
-            # print("\t".join(map(str, line)))
             d = "\t".join(map(str, line))
             fw.write(f"{d}\n")
 
@@ -58,14 +59,16 @@ def download_or_use_local(file_or_url, output_folder, label):
 
 def run_it():
     parser = argparse.ArgumentParser(description='Qtop: quality control tool for tokenizers')
-    parser.add_argument('-i', help='Tokenizer json files or URLs', required=True, nargs='+')
-    parser.add_argument('-l', help='Tokenizer labels', required=True, nargs='+')
-    parser.add_argument('-o', help='Output folder', required=True)
+    parser.add_argument('-i', '--input', help='Tokenizer json files or URLs', required=True, nargs='+')
+    parser.add_argument('-l', '--labels', help='Tokenizer labels', required=True, nargs='+')
+    parser.add_argument('-o', '--output', help='Output folder', required=True)
+    parser.add_argument('--latex', action='store_true', help='Generate LaTeX and PDF reports')
     args = parser.parse_args()
 
-    tokenizer_files_or_urls = args.i
-    labels = args.l
-    output_folder = args.o
+    tokenizer_files_or_urls = args.input
+    labels = args.labels
+    output_folder = args.output
+    generate_latex = args.latex
 
     if len(tokenizer_files_or_urls) != len(labels):
         raise ValueError("Number of tokenizer files/URLs must match number of labels")
@@ -74,7 +77,7 @@ def run_it():
         os.makedirs(output_folder)
 
     model2vocab_tok = {}
-    for file_or_url, label in zip(tokenizer_files_or_urls, labels):
+    for file_or_url, label in tqdm(zip(tokenizer_files_or_urls, labels), desc="Downloading tokenizers", total=len(labels)):
         local_file = download_or_use_local(file_or_url, output_folder, label)
         if local_file:
             model2vocab_tok[label] = load_vocab(local_file)
@@ -95,7 +98,7 @@ def run_it():
         token2hits = json.load(fh)
 
     # Update model2vocab and token2hits with new tokenizers
-    for label, vocab in model2vocab_tok.items():
+    for label, vocab in tqdm(model2vocab_tok.items(), desc="Updating vocabularies"):
         model2vocab[label] = vocab
         for token, rank in vocab.items():
             if token not in token2hits:
@@ -156,21 +159,24 @@ def run_it():
         unseen_tokens_cyr
     )
 
-    generate_latex_report(
-        output_folder,
-        labels,
-        stats_table,
-        stats_table_p,
-        unicode_table_p,
-        final_table_lat,
-        final_table_cyr,
-        unseen_tokens_lat,
-        unseen_tokens_cyr
-    )
-
     print(f"HTML report generated: {os.path.join(output_folder, 'report.html')}")
-    print(f"LaTeX report generated: {os.path.join(output_folder, 'report.tex')}")
-    print(f"PDF report generated: {os.path.join(output_folder, 'report.pdf')}")
+
+    if generate_latex:
+        generate_latex_report(
+            output_folder,
+            labels,
+            stats_table,
+            stats_table_p,
+            unicode_table_p,
+            final_table_lat,
+            final_table_cyr,
+            unseen_tokens_lat,
+            unseen_tokens_cyr
+        )
+
+
+        print(f"LaTeX report generated: {os.path.join(output_folder, 'report.tex')}")
+        print(f"PDF report generated: {os.path.join(output_folder, 'report.pdf')}")
 
 if __name__ == "__main__":
     run_it()

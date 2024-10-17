@@ -34,23 +34,19 @@ pip install .
 Qtok can be used as a command-line tool:
 
 ```bash
-qtok -i /path/to/tokenizer1.json /path/to/tokenizer2.json ... -l label1 label2 ... -o /path/to/output/folder
+qtok -i /path/to/tokenizer1.json /path/to/tokenizer2.json ... -l label1 label2 ... -o /path/to/output/folder [--latex]
 ```
 
 Arguments:
 - `-i`: Paths to the tokenizer JSON files or URLs (required, multiple inputs accepted)
 - `-l`: Labels for the tokenizers (required, must match the number of input files)
 - `-o`: Output folder for results (required)
+- `--latex`: Optional flag to generate LaTeX and PDF reports (default: False)
 
 Example:
 ```bash
-qtok -i /path/to/tokenizer1.json /path/to/tokenizer2.json ... -l label1 label2 ... -o /path/to/output/folder
+qtok -i /path/to/tokenizer1.json /path/to/tokenizer2.json -l label1 label2 -o /path/to/output/folder --latex
 ```
-
-- Arguments:
-  - `-i`: Paths to the tokenizer JSON files or URLs (required, multiple inputs accepted)
-  - `-l`: Labels for the tokenizers (required, must match the number of input files)
-  - `-o`: Output folder for results (required)
 
 ## Output
 
@@ -61,7 +57,7 @@ Qtok generates several output files:
 3. `latin_stats.tsv` and `latin_stats.png`: Statistics for Latin script tokens
 4. `cyrillic_stats.tsv` and `cyrillic_stats.png`: Statistics for Cyrillic script tokens
 5. `report.html`: An HTML report summarizing all analyses
-6. `report.tex` and `report.pdf`: LaTeX and PDF versions of the report (if pdflatex is installed)
+6. `report.tex` and `report.pdf`: LaTeX and PDF versions of the report (if `--latex` flag is used and pdflatex is installed)
 
 ## Requirements
 
@@ -70,12 +66,14 @@ Qtok generates several output files:
 - numpy
 - pandas
 - requests
+- tqdm
 
 ## Reproducibility
 
 For full tables and data, please refer to the Jupyter notebook available at:
 
 [Qtok/paper/Qtok_v3.ipynb](https://github.com/nup-csai/Qtok/blob/main/paper/Qtok_v3.ipynb)
+
 ## Contributing
 
 Contributions to Qtok are welcome! Please feel free to submit a Pull Request.

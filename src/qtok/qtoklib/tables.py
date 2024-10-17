@@ -1,6 +1,7 @@
 # Qtok/src/qtok/qtoklib/tables.py
 
 from collections import defaultdict
+from tqdm import tqdm
 
 def get_stats_table(model2vocab_tok, token2hits_tok, token2meta):
     headers = [
@@ -17,20 +18,11 @@ def get_stats_table(model2vocab_tok, token2hits_tok, token2meta):
         "spaced_errors",
         "inner_errors",
     ]
-    tokenizers_to_meta = {}
+    tokenizers_to_meta = defaultdict(lambda: defaultdict(int))
 
-    # Process Qtok
-    tokenizers_to_meta["Qtok"] = defaultdict(int)
-    for token in token2hits_tok:
-        meta = token2meta[token]
-        if meta[0] in headers:
-            tokenizers_to_meta["Qtok"][meta[0]] += 1
-        else:
-            print(f"Unexpected meta: {meta}")
-
-    # Process other tokenizers
-    for model, tokens in model2vocab_tok.items():
-        tokenizers_to_meta[model] = defaultdict(int)
+    # Process all tokenizers including Qtok
+    for model in tqdm(["Qtok"] + list(model2vocab_tok.keys()), desc="Processing tokenizers"):
+        tokens = token2hits_tok if model == "Qtok" else model2vocab_tok[model]
         for token in tokens:
             meta = token2meta[token]
             if meta[0] in headers:
@@ -47,7 +39,7 @@ def get_stats_table(model2vocab_tok, token2hits_tok, token2meta):
         table.append(row)
 
         total = sum(tokenizers_to_meta[model].values())
-        row_p = [model] + [round(100 * tokenizers_to_meta[model][header] / total, 2) for header in headers]
+        row_p = [model] + [round(100 * tokenizers_to_meta[model][header] / total, 2) if total > 0 else 0 for header in headers]
         table_p.append(row_p)
 
     return table, table_p
@@ -56,26 +48,20 @@ def get_unicode_tables(model2vocab_tok, token2hits_tok, token2meta):
     tokenizers_to_meta = defaultdict(lambda: defaultdict(int))
     model2size = defaultdict(int)
 
-    # Process Qtok
-    for token in token2hits_tok:
-        meta = token2meta[token]
-        if "alpha" in meta[0]:
-            tokenizers_to_meta["Qtok"][meta] += 1
-            model2size["Qtok"] += 1
-
-    # Process other tokenizers
-    for model, tokens in model2vocab_tok.items():
+    # Process all tokenizers including Qtok
+    for model in tqdm(["Qtok"] + list(model2vocab_tok.keys()), desc="Processing unicode tokens"):
+        tokens = token2hits_tok if model == "Qtok" else model2vocab_tok[model]
         for token in tokens:
             meta = token2meta[token]
             if "alpha" in meta[0]:
                 tokenizers_to_meta[model][meta] += 1
                 model2size[model] += 1
 
-    headers = list(tokenizers_to_meta["Qtok"].keys())
+    headers = list(set().union(*[tokenizers_to_meta[model].keys() for model in tokenizers_to_meta]))
     table = [["Tokenizer"] + headers]
 
     for model in ["Qtok"] + list(model2vocab_tok.keys()):
-        row = [model] + [round(100 * tokenizers_to_meta[model][header] / model2size[model], 2) for header in headers]
+        row = [model] + [round(100 * tokenizers_to_meta[model][header] / model2size[model], 2) if model2size[model] > 0 else 0 for header in headers]
         table.append(row)
 
     # Transpose and format table
@@ -83,7 +69,7 @@ def get_unicode_tables(model2vocab_tok, token2hits_tok, token2meta):
     formatted_table = [[format_header(row[0])] + list(row[1:]) if isinstance(row[0], tuple) else list(row) for row in transposed_table]
 
     # Process 'Other' row
-    other_row = ['Other'] + [0] * (len(formatted_table[0]) - 1)
+    other_row = ['Other'] + [0.0] * (len(formatted_table[0]) - 1)
     final_table = [formatted_table[0]]
     for row in formatted_table[1:]:
         if all(float(cell) <= 1 for cell in row[1:]):
@@ -103,19 +89,9 @@ def get_language_table(model2vocab_tok, token2hits_tok, token2meta, lang_data):
     model2size = defaultdict(int)
     unseen_tokens = set()
 
-    # Process Qtok
-    for token in token2hits_tok:
-        meta = token2meta[token]
-        if "alpha" in meta[0] and len(token) > 1:
-            if token in lang_data:
-                for lang in lang_data[token]:
-                    tokenizers_to_meta["Qtok"][lang] += 1 / len(lang_data[token])
-                    model2size["Qtok"] += 1
-            else:
-                unseen_tokens.add(token)
-
-    # Process other tokenizers
-    for model, tokens in model2vocab_tok.items():
+    # Process all tokenizers including Qtok
+    for model in tqdm(["Qtok"] + list(model2vocab_tok.keys()), desc="Processing language tokens"):
+        tokens = token2hits_tok if model == "Qtok" else model2vocab_tok[model]
         for token in tokens:
             meta = token2meta[token]
             if "alpha" in meta[0] and len(token) > 1:
@@ -123,12 +99,14 @@ def get_language_table(model2vocab_tok, token2hits_tok, token2meta, lang_data):
                     for lang in lang_data[token]:
                         tokenizers_to_meta[model][lang] += 1 / len(lang_data[token])
                         model2size[model] += 1
+                else:
+                    unseen_tokens.add(token)
 
-    headers = list(tokenizers_to_meta["Qtok"].keys())
+    headers = list(set().union(*[tokenizers_to_meta[model].keys() for model in tokenizers_to_meta]))
     table = [["Tokenizer"] + headers]
 
     for model in ["Qtok"] + list(model2vocab_tok.keys()):
-        row = [model] + [round(100 * tokenizers_to_meta[model][header] / model2size[model], 2) for header in headers]
+        row = [model] + [round(100 * tokenizers_to_meta[model][header] / model2size[model], 2) if model2size[model] > 0 else 0 for header in headers]
         table.append(row)
 
     # Transpose and format table
@@ -136,7 +114,7 @@ def get_language_table(model2vocab_tok, token2hits_tok, token2meta, lang_data):
     formatted_table = [[format_header(row[0])] + list(row[1:]) if isinstance(row[0], tuple) else list(row) for row in transposed_table]
 
     # Process 'Other' row
-    other_row = ['Other'] + [0] * (len(formatted_table[0]) - 1)
+    other_row = ['Other'] + [0.0] * (len(formatted_table[0]) - 1)
     final_table = [formatted_table[0]]
     for row in formatted_table[1:]:
         if all(float(cell) <= 0.5 for cell in row[1:]):

@@ -16,9 +16,10 @@ else:
         "numpy",
         "jinja2",
         "requests",
+        "tqdm",
     ]
 
-version = "0.10.7"
+version = "0.11.0"
 
 setup(
     name="Qtok",
