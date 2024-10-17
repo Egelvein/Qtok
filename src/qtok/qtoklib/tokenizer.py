@@ -173,8 +173,19 @@ def load_vocab(tokenizer_file):
 
     vocab = {}
 
-    with open(tokenizer_file, "r") as fr:
-        tokenizer = json.load(fr)
+    try:
+        with open(tokenizer_file, "r") as fr:
+            tokenizer = json.load(fr)
+    except json.decoder.JSONDecodeError:
+        print(f"Bad tokenizer file: {tokenizer_file}")
+        print("Please provide a valid tokenizer file.")
+        print("Here are the first few lines of the file:")
+        with open(tokenizer_file, "r") as fr:
+            for i, line in enumerate(fr):
+                print(line)
+                if i > 10:
+                    break
+        sys.exit(1)
     if not "model" in tokenizer:
         if "vocab" in tokenizer:
             tokenizer["model"] = {"vocab": tokenizer["vocab"]}
