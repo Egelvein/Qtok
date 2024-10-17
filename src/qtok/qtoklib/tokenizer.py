@@ -201,6 +201,9 @@ def load_vocab(tokenizer_file):
         if isinstance(tokenizer["model"]["vocab"], list):
             print("Bad format for vocab")
             sys.exit(1)
+    if not "model" in tokenizer or not "vocab" in tokenizer["model"]:
+        print("Bad format for vocab")
+        sys.exit(1)
     
     with open(tokenizer_file) as fh:
         text_data = fh.read()
