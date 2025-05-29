@@ -52,7 +52,17 @@ qtok -i /path/to/tokenizer1.json /path/to/tokenizer2.json -l label1 label2 -o /p
   - `-i`: Paths to the tokenizer JSON files or URLs (required, multiple inputs accepted)
   - `-l`: Labels for the tokenizers (required, must match the number of input files)
   - `-o`: Output folder for results (required)
+  
+Example if you want to work only with specific tokenizers:
+```bash
+qtok -i /path/to/tokenizer1.json /path/to/tokenizer2.json -l label1 label2 -o /path/to/output/folder -nt OGT --latex
+```
 
+- Arguments:
+  - `-i`: Paths to the tokenizer JSON files or URLs (required, multiple inputs accepted)
+  - `-l`: Labels for the tokenizers (required, must match the number of input files)
+  - `-o`: Output folder for results (required)
+  - `-nt`: Work only with given tokenizers or with all basic tokenizers. By default "AT" (All Tokenizers), more supported options "OGT" (Only Given Tokenizers) and "OGTQ" (Only Given Tokenizers + Qtok unified tokenizer)
 ## Output
 
 Qtok generates several output files:

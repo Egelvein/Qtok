@@ -3,3 +3,4 @@ pandas
 numpy
 jinja2
 tqdm
+requests

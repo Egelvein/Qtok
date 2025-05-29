@@ -20,9 +20,9 @@ def get_stats_table(model2vocab_tok, token2hits_tok, token2meta):
     ]
     tokenizers_to_meta = defaultdict(lambda: defaultdict(int))
 
-    # Process all tokenizers including Qtok
-    for model in tqdm(["Qtok"] + list(model2vocab_tok.keys()), desc="Processing tokenizers"):
-        tokens = token2hits_tok if model == "Qtok" else model2vocab_tok[model]
+    # Process all tokenizers
+    for model in tqdm(list(model2vocab_tok.keys()), desc="Processing tokenizers"):
+        tokens = model2vocab_tok[model]
         for token in tokens:
             meta = token2meta[token]
             if meta[0] in headers:
@@ -34,7 +34,7 @@ def get_stats_table(model2vocab_tok, token2hits_tok, token2meta):
     table = [["Tokenizer"] + headers]
     table_p = [["Tokenizer"] + headers]
 
-    for model in ["Qtok"] + list(model2vocab_tok.keys()):
+    for model in list(model2vocab_tok.keys()):
         row = [model] + [tokenizers_to_meta[model][header] for header in headers]
         table.append(row)
 
@@ -48,9 +48,9 @@ def get_unicode_tables(model2vocab_tok, token2hits_tok, token2meta):
     tokenizers_to_meta = defaultdict(lambda: defaultdict(int))
     model2size = defaultdict(int)
 
-    # Process all tokenizers including Qtok
-    for model in tqdm(["Qtok"] + list(model2vocab_tok.keys()), desc="Processing unicode tokens"):
-        tokens = token2hits_tok if model == "Qtok" else model2vocab_tok[model]
+    # Process all tokenizers
+    for model in tqdm(list(model2vocab_tok.keys()), desc="Processing unicode tokens"):
+        tokens = model2vocab_tok[model]
         for token in tokens:
             meta = token2meta[token]
             if "alpha" in meta[0]:
@@ -60,7 +60,7 @@ def get_unicode_tables(model2vocab_tok, token2hits_tok, token2meta):
     headers = list(set().union(*[tokenizers_to_meta[model].keys() for model in tokenizers_to_meta]))
     table = [["Tokenizer"] + headers]
 
-    for model in ["Qtok"] + list(model2vocab_tok.keys()):
+    for model in list(model2vocab_tok.keys()):
         row = [model] + [round(100 * tokenizers_to_meta[model][header] / model2size[model], 2) if model2size[model] > 0 else 0 for header in headers]
         table.append(row)
 
@@ -89,9 +89,9 @@ def get_language_table(model2vocab_tok, token2hits_tok, token2meta, lang_data):
     model2size = defaultdict(int)
     unseen_tokens = set()
 
-    # Process all tokenizers including Qtok
-    for model in tqdm(["Qtok"] + list(model2vocab_tok.keys()), desc="Processing language tokens"):
-        tokens = token2hits_tok if model == "Qtok" else model2vocab_tok[model]
+    # Process all tokenizers
+    for model in tqdm(list(model2vocab_tok.keys()), desc="Processing language tokens"):
+        tokens = model2vocab_tok[model]
         for token in tokens:
             meta = token2meta[token]
             if "alpha" in meta[0] and len(token) > 1:
@@ -105,7 +105,7 @@ def get_language_table(model2vocab_tok, token2hits_tok, token2meta, lang_data):
     headers = list(set().union(*[tokenizers_to_meta[model].keys() for model in tokenizers_to_meta]))
     table = [["Tokenizer"] + headers]
 
-    for model in ["Qtok"] + list(model2vocab_tok.keys()):
+    for model in list(model2vocab_tok.keys()):
         row = [model] + [round(100 * tokenizers_to_meta[model][header] / model2size[model], 2) if model2size[model] > 0 else 0 for header in headers]
         table.append(row)
 

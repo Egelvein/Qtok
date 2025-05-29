@@ -174,13 +174,13 @@ def load_vocab(tokenizer_file):
     vocab = {}
 
     try:
-        with open(tokenizer_file, "r") as fr:
+        with open(tokenizer_file, "r", encoding="utf-8") as fr:
             tokenizer = json.load(fr)
     except json.decoder.JSONDecodeError:
         print(f"Bad tokenizer file: {tokenizer_file}")
         print("Please provide a valid tokenizer file.")
         print("Here are the first few lines of the file:")
-        with open(tokenizer_file, "r") as fr:
+        with open(tokenizer_file, "r", encoding="utf-8") as fr:
             for i, line in enumerate(fr):
                 print(line)
                 if i > 10:
@@ -193,7 +193,7 @@ def load_vocab(tokenizer_file):
             tokenizer["model"] = {
                 "vocab": tokenizer
             }
-        with open(tokenizer_file, "w") as fw:
+        with open(tokenizer_file, "w", encoding="utf-8") as fw:
             json.dump(tokenizer, fw, indent=2)
 
     ### rare case with negative ranks
@@ -205,7 +205,7 @@ def load_vocab(tokenizer_file):
         print("Bad format for vocab")
         sys.exit(1)
     
-    with open(tokenizer_file) as fh:
+    with open(tokenizer_file, encoding="utf-8") as fh:
         text_data = fh.read()
 
     replacers = [

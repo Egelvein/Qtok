@@ -552,9 +552,25 @@ def generate_latex_report(output_folder, labels, stats_table, stats_table_p, uni
     with open(os.path.join(output_folder, 'report.tex'), 'w', encoding='utf-8') as f:
         f.write(rendered_latex)
 
+
     # Compile LaTeX to PDF
-    if subprocess.run(["pdflatex", "--version"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL).returncode != 0:
+    # if subprocess.run(["pdflatex", "--version"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL).returncode != 0: # ERROR HERE, DONT GO INSIDE IF PDFLATEX IS NOT INSTALLED
+    #     print("pdflatex is not installed. Please install it and try again to generate the pdf report.")
+    # else:
+    #     subprocess.run(["pdflatex", "-output-directory", output_folder, os.path.join(output_folder, 'report.tex')], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    #     subprocess.run(["pdflatex", "-output-directory", output_folder, os.path.join(output_folder, 'report.tex')], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+
+    # Offer to change for this one:
+    try:
+        subprocess.run(["pdflatex", "--version"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        pdflatex_success = True
+    except Exception as e:
+        pdflatex_success = False
+        print(f"Error: {e}")
         print("pdflatex is not installed. Please install it and try again to generate the pdf report.")
-    else:
+
+    if pdflatex_success:
         subprocess.run(["pdflatex", "-output-directory", output_folder, os.path.join(output_folder, 'report.tex')], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         subprocess.run(["pdflatex", "-output-directory", output_folder, os.path.join(output_folder, 'report.tex')], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+
+    return pdflatex_success

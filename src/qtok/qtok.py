@@ -2,23 +2,30 @@
 # -*- coding: utf-8 -*-
 #
 # @created: 20.09.2024
-# @updated: 20.09.2024 (added progress bars using tqdm)
+# @updated: 29.05.2024 (added support of different operating modes + fixed pdflatex error handling) by Viacheslav
 # @author: Aleksey Komissarov
 # @contact: ad3002@gmail.com
 
+
+import os
+import json
 import argparse
 import requests
-import os
-from .qtoklib.tokenizer import load_vocab
-import json
-from .qtoklib.classification import get_classification
-from .qtoklib.tables import get_stats_table
-from .qtoklib.tables import get_unicode_tables
-from .qtoklib.figures import plot_with_distinct_markers_and_colors
-from collections import defaultdict
-from .qtoklib.tables import get_language_table
-from .qtoklib.report_generator import generate_html_report, generate_latex_report
 from tqdm import tqdm
+from collections import defaultdict
+from .qtoklib.classification import get_classification
+from .qtoklib.choose_tokenizers import choose_tokenizers
+from .qtoklib.figures import plot_with_distinct_markers_and_colors
+from .qtoklib.report_generator import (
+    generate_html_report,
+    generate_latex_report,
+    )
+from .qtoklib.tables import (
+    get_stats_table,
+    get_unicode_tables,
+    get_language_table,
+    )
+
 
 def save_tsv_file(file_path, data):
     with open(file_path, "w", encoding="utf-8") as fw:
@@ -26,42 +33,13 @@ def save_tsv_file(file_path, data):
             d = "\t".join(map(str, line))
             fw.write(f"{d}\n")
 
-def download_or_use_local(file_or_url, output_folder, label):
-    if not os.path.exists(output_folder):
-        os.makedirs(output_folder)
-
-    local_file = os.path.join(output_folder, f"tokenizer_{label}.json")
-
-    if file_or_url.startswith(('http://', 'https://')):
-
-        if "huggingface.co" in file_or_url and "blob/main" in file_or_url:
-            file_or_url = file_or_url.replace("blob/main", "raw/main")
-
-        try:
-            response = requests.get(file_or_url)
-            if response.status_code == 200:
-                with open(local_file, 'wb') as f:
-                    f.write(response.content)
-                print(f"File downloaded successfully and saved to {local_file}")
-                return local_file
-            else:
-                print(f"Failed to download file. Status code: {response.status_code}")
-                return None
-        except Exception as e:
-            print(f"An error occurred while downloading: {e}")
-            return None
-    else:
-        if os.path.exists(file_or_url):
-            return file_or_url
-        else:
-            print(f"Local file not found: {file_or_url}")
-            return None
-
 def run_it():
     parser = argparse.ArgumentParser(description='Qtop: quality control tool for tokenizers')
     parser.add_argument('-i', '--input', help='Tokenizer json files or URLs', required=True, nargs='+')
     parser.add_argument('-l', '--labels', help='Tokenizer labels', required=True, nargs='+')
     parser.add_argument('-o', '--output', help='Output folder', required=True)
+    parser.add_argument('-nt', '--needed-tokenizers', help='Work only with given tokenizers or with all basic tokenizers',
+                        default="AT", type=str, choices=["AT", "OGT", "OGTQ"])
     parser.add_argument('--latex', action='store_true', help='Generate LaTeX and PDF reports')
     args = parser.parse_args()
 
@@ -69,42 +47,23 @@ def run_it():
     labels = args.labels
     output_folder = args.output
     generate_latex = args.latex
+    needed_tokenizers = args.needed_tokenizers
 
-    if len(tokenizer_files_or_urls) != len(labels):
-        raise ValueError("Number of tokenizer files/URLs must match number of labels")
+    # if len(tokenizer_files_or_urls) != len(labels):
+    #     raise ValueError("Number of tokenizer files/URLs must match number of labels")
+    # Maybe change to this row? -O is rare case
+    assert len(tokenizer_files_or_urls) == len(labels), "Number of tokenizer files/URLs must match number of labels"
 
     if not os.path.exists(output_folder):
         os.makedirs(output_folder)
 
-    model2vocab_tok = {}
-    for file_or_url, label in tqdm(zip(tokenizer_files_or_urls, labels), desc="Downloading tokenizers", total=len(labels)):
-        local_file = download_or_use_local(file_or_url, output_folder, label)
-        if local_file:
-            model2vocab_tok[label] = load_vocab(local_file)
-        else:
-            print(f"Skipping tokenizer for label {label} due to file/download issues")
-
-    if not model2vocab_tok:
-        print("No valid tokenizer files found. Exiting.")
-        return
-
-    model2vocab_json_file = os.path.join(os.path.dirname(__file__), "data/model2vocab_tok.json")
-    token2his_json_file = os.path.join(os.path.dirname(__file__), "data/token2hits_tok.json")
-
-    with open(model2vocab_json_file) as fh:
-        model2vocab = json.load(fh)
-
-    with open(token2his_json_file) as fh:
-        token2hits = json.load(fh)
-
-    # Update model2vocab and token2hits with new tokenizers
-    for label, vocab in tqdm(model2vocab_tok.items(), desc="Updating vocabularies"):
-        model2vocab[label] = vocab
-        for token, rank in vocab.items():
-            if token not in token2hits:
-                token2hits[token] = [0] * len(model2vocab) + [rank]
-            else:
-                token2hits[token].extend([0] * (len(model2vocab) - len(token2hits[token])) + [rank])
+    # Get model2vocab and token2hits with chosen tokenizers
+    model2vocab, token2hits = choose_tokenizers(
+        tokenizer_files_or_urls=tokenizer_files_or_urls,
+        labels=labels,
+        output_folder=output_folder,
+        needed_tokenizers=needed_tokenizers
+        )
 
     token2meta, category2tokens = get_classification(token2hits)
 
@@ -162,7 +121,7 @@ def run_it():
     print(f"HTML report generated: {os.path.join(output_folder, 'report.html')}")
 
     if generate_latex:
-        generate_latex_report(
+        pdflatex_success = generate_latex_report(
             output_folder,
             labels,
             stats_table,
@@ -174,9 +133,9 @@ def run_it():
             unseen_tokens_cyr
         )
 
-
         print(f"LaTeX report generated: {os.path.join(output_folder, 'report.tex')}")
-        print(f"PDF report generated: {os.path.join(output_folder, 'report.pdf')}")
+        if pdflatex_success:
+            print(f"PDF report generated: {os.path.join(output_folder, 'report.pdf')}")
 
 if __name__ == "__main__":
     run_it()
